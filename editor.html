@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактор | Читалка Lumia</title>
+    <title>Редактор книг</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial;
@@ -37,27 +37,28 @@
 <body>
     <button class="back-btn" onclick="window.location.href='index.html'">← На главную</button>
     <h2>Редактор книг:</h2>
+    
     <input type="text" id="book-title" placeholder="Название книги">
-    <textarea id="book-content" placeholder="Текст книги..."></textarea>
-    <button onclick="saveBook()">Сохранить</button>
-
+    <textarea id="book-text" placeholder="Текст книги..."></textarea>
+    <button onclick="saveBook()">Сохранить книгу</button>
+    
     <script>
         function saveBook() {
-            const title = document.getElementById('book-title').value;
-            const content = document.getElementById('book-content').value;
-
-            if (!title || !content) {
-                alert('Заполните все поля!');
+            var title = document.getElementById('book-title').value;
+            var text = document.getElementById('book-text').value;
+            
+            if(!title || !text) {
+                alert("Заполните все поля!");
                 return;
             }
-
-            const books = JSON.parse(localStorage.getItem('localBooks') || '[]');
-            books.push({ title, content });
+            
+            var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
+            books.push({title: title, content: text});
             localStorage.setItem('localBooks', JSON.stringify(books));
-
-            alert('Книга сохранена!');
+            
+            alert("Книга сохранена!");
             document.getElementById('book-title').value = '';
-            document.getElementById('book-content').value = '';
+            document.getElementById('book-text').value = '';
         }
     </script>
 </body>
