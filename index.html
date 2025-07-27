@@ -3,27 +3,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Читалка Lumia</title>
+    <title>Главная | Читалка Lumia</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial;
             padding: 20px;
             background: #f0f0f0;
-            -ms-touch-action: manipulation;
-            touch-action: manipulation;
         }
         h1 {
             color: #0066cc;
             text-align: center;
         }
-        .menu-button {
+        .menu-btn {
             background: #0066cc;
             color: white;
             border: none;
             padding: 15px;
             margin: 10px 0;
             width: 100%;
-            font-size: 20px;
+            font-size: 18px;
             display: block;
             text-align: center;
             text-decoration: none;
@@ -32,16 +30,8 @@
 </head>
 <body>
     <h1>📚 Читалка Lumia</h1>
-    
-    <a href="github.html" class="menu-button">Книги с GitHub</a>
-    <a href="local.html" class="menu-button">Локальные книги</a>
-    <a href="editor.html" class="menu-button">Редактор книг</a>
-    
-    <script>
-        // Проверка поддержки localStorage
-        if(typeof(Storage) === "undefined") {
-            alert("Ваш браузер не поддерживает localStorage. Локальные книги не будут работать.");
-        }
-    </script>
+    <a href="github.html" class="menu-btn">Книги с GitHub</a>
+    <a href="local.html" class="menu-btn">Локальные книги</a>
+    <a href="editor.html" class="menu-btn">Редактор</a>
 </body>
 </html>
