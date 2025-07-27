@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Локальные книги</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial;
+            padding: 10px;
+            background: #f0f0f0;
+        }
+        .book {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #0066cc;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        .back-btn {
+            background: #cc0000;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">← На главную</button>
+    <h2>Ваши книги:</h2>
+    
+    <div id="local-books"></div>
+    
+    <div id="reader" style="display:none; margin-top:20px; background:white; padding:10px;">
+        <button onclick="document.getElementById('reader').style.display='none'">← Назад</button>
+        <div id="book-content" style="margin-top:10px;"></div>
+    </div>
+    
+    <script>
+        // Загрузка книг при открытии страницы
+        window.onload = function() {
+            loadBooks();
+        };
+        
+        function loadBooks() {
+            var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
+            var container = document.getElementById('local-books');
+            container.innerHTML = '';
+            
+            if(books.length === 0) {
+                container.innerHTML = '<p>У вас пока нет локальных книг</p>';
+                return;
+            }
+            
+            for(var i = 0; i < books.length; i++) {
+                var div = document.createElement('div');
+                div.className = 'book';
+                div.innerHTML = '<h3>' + books[i].title + '</h3>' +
+                                '<button onclick="readBook(' + i + ')">Читать</button>' +
+                                '<button onclick="deleteBook(' + i + ')">Удалить</button>';
+                container.appendChild(div);
+            }
+        }
+        
+        function readBook(index) {
+            var books = JSON.parse(localStorage.getItem('localBooks'));
+            document.getElementById('reader').style.display = 'block';
+            document.getElementById('book-content').textContent = books[index].content;
+        }
+        
+        function deleteBook(index) {
+            var books = JSON.parse(localStorage.getItem('localBooks'));
+            books.splice(index, 1);
+            localStorage.setItem('localBooks', JSON.stringify(books));
+            loadBooks();
+        }
+    </script>
+</body>
+</html>
