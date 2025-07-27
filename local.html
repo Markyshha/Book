@@ -29,13 +29,20 @@
             background: #cc0000;
             margin-bottom: 20px;
         }
+        #loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <button class="back-btn" onclick="window.location.href='index.html'">← На главную</button>
     <h2>Ваши книги:</h2>
     
-    <div id="local-books"></div>
+    <div id="loading">Загрузка...</div>
+    <div id="local-books" style="display: none;"></div>
     
     <div id="reader" style="display:none; margin-top:20px; background:white; padding:10px;">
         <button onclick="document.getElementById('reader').style.display='none'">← Назад</button>
@@ -43,47 +50,51 @@
     </div>
     
     <script>
-        // Проверяем localStorage, блядь
-        if (typeof localStorage === 'undefined') {
-            alert("Твой браузер не поддерживает localStorage! Книги не сохранятся!");
-        }
-
-        // Загружаем книги при открытии
-        window.onload = function() {
-            loadBooks();
-        };
-        
+        // ПРОВЕРЯЕМ, ЕСТЬ ЛИ КНИГИ ВООБЩЕ
         function loadBooks() {
+            var loadingText = document.getElementById('loading');
+            var booksContainer = document.getElementById('local-books');
+            
             try {
-                var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
-                var container = document.getElementById('local-books');
-                container.innerHTML = '';
+                // Пытаемся загрузить книги
+                var books = JSON.parse(localStorage.getItem('localBooks') || [];
                 
+                // Если нихуя нет
                 if (books.length === 0) {
-                    container.innerHTML = '<p>У вас пока нет книг, ленивая жопа!</p>';
+                    loadingText.textContent = "Нет книг, ленивая жопа!";
                     return;
                 }
                 
+                // Если книги есть – скрываем "Загрузка..." и показываем книги
+                loadingText.style.display = 'none';
+                booksContainer.style.display = 'block';
+                
+                // Отрисовываем книги
+                booksContainer.innerHTML = '';
                 for (var i = 0; i < books.length; i++) {
                     var div = document.createElement('div');
                     div.className = 'book';
                     div.innerHTML = '<h3>' + books[i].title + '</h3>' +
                                     '<button onclick="readBook(' + i + ')">Читать</button>' +
                                     '<button onclick="deleteBook(' + i + ')">Удалить</button>';
-                    container.appendChild(div);
+                    booksContainer.appendChild(div);
                 }
             } catch (e) {
-                alert("ОШИБКА ПРИ ЗАГРУЗКЕ КНИГ: " + e.message);
+                loadingText.textContent = "Ошибка загрузки: " + e.message;
             }
         }
+
+        // Запускаем загрузку при открытии страницы
+        window.onload = loadBooks;
         
+        // Остальные функции (readBook, deleteBook) без изменений
         function readBook(index) {
             try {
                 var books = JSON.parse(localStorage.getItem('localBooks'));
                 document.getElementById('reader').style.display = 'block';
                 document.getElementById('book-content').textContent = books[index].content;
             } catch (e) {
-                alert("НЕ УДАЛОСЬ ПРОЧЕСТЬ КНИГУ: " + e.message);
+                alert("ОШИБКА: " + e.message);
             }
         }
         
@@ -92,9 +103,9 @@
                 var books = JSON.parse(localStorage.getItem('localBooks'));
                 books.splice(index, 1);
                 localStorage.setItem('localBooks', JSON.stringify(books));
-                loadBooks();
+                loadBooks(); // Перезагружаем список
             } catch (e) {
-                alert("НЕ УДАЛОСЬ УДАЛИТЬ КНИГУ: " + e.message);
+                alert("ОШИБКА: " + e.message);
             }
         }
     </script>
