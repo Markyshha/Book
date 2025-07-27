@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Читалка TXT-книг с GitHub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #0066cc;
+            text-align: center;
+        }
+        #bookList {
+            margin: 20px 0;
+        }
+        .book-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .book-btn:hover {
+            background: #0055aa;
+        }
+        #bookContent {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            white-space: pre-line;
+            line-height: 1.5;
+        }
+        #loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 Читалка TXT-книг</h1>
+    
+    <div>
+        <h3>Доступные книги:</h3>
+        <div id="bookList">
+            <!-- Кнопки книг появятся здесь -->
+        </div>
+    </div>
+
+    <hr>
+    
+    <div id="bookContent">
+        <p id="loading">Выберите книгу из списка...</p>
+    </div>
+
+    <script>
+        // ====== НАСТРОЙКИ ====== //
+        // Замени ссылки на свои .txt-файлы в GitHub
+        const books = [
+            { 
+                name: "Пример книги 1", 
+                url: "https://raw.githubusercontent.com/ТВОЙ_ЛОГИН/ТВОЙ_РЕПОЗИТОРИЙ/main/books/книга1.txt" 
+            },
+            { 
+                name: "Пример книги 2", 
+                url: "https://raw.githubusercontent.com/ТВОЙ_ЛОГИН/ТВОЙ_РЕПОЗИТОРИЙ/main/books/книга2.txt" 
+            }
+        ];
+
+        // ====== ОСНОВНОЙ КОД ====== //
+        const bookList = document.getElementById("bookList");
+        const bookContent = document.getElementById("bookContent");
+        const loadingText = document.getElementById("loading");
+
+        // Показываем список книг
+        books.forEach(book => {
+            const button = document.createElement("button");
+            button.className = "book-btn";
+            button.textContent = book.name;
+            button.onclick = () => loadBook(book.url);
+            bookList.appendChild(button);
+        });
+
+        // Загружаем книгу с GitHub
+        async function loadBook(url) {
+            loadingText.textContent = "Загрузка...";
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Ошибка загрузки");
+                
+                const text = await response.text();
+                bookContent.innerHTML = `<h3>${url.split('/').pop()}</h3><hr>${text}`;
+            } catch (error) {
+                bookContent.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
