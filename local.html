@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Локальные книги | Читалка Lumia</title>
+    <title>Локальные книги</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial;
@@ -34,48 +34,69 @@
 <body>
     <button class="back-btn" onclick="window.location.href='index.html'">← На главную</button>
     <h2>Ваши книги:</h2>
-    <div id="local-books">
-        <p>Загрузка...</p>
+    
+    <div id="local-books"></div>
+    
+    <div id="reader" style="display:none; margin-top:20px; background:white; padding:10px;">
+        <button onclick="document.getElementById('reader').style.display='none'">← Назад</button>
+        <div id="book-content" style="margin-top:10px;"></div>
     </div>
-
+    
     <script>
-        // Загрузка книг из localStorage
-        function loadBooks() {
-            const books = JSON.parse(localStorage.getItem('localBooks') || '[]');
-            const container = document.getElementById('local-books');
-            
-            if (books.length === 0) {
-                container.innerHTML = '<p>Нет сохранённых книг</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            books.forEach((book, index) => {
-                const div = document.createElement('div');
-                div.className = 'book';
-                div.innerHTML = `
-                    <h3>${book.title}</h3>
-                    <button onclick="readBook(${index})">Читать</button>
-                    <button onclick="deleteBook(${index})">Удалить</button>
-                `;
-                container.appendChild(div);
-            });
+        // Проверяем localStorage, блядь
+        if (typeof localStorage === 'undefined') {
+            alert("Твой браузер не поддерживает localStorage! Книги не сохранятся!");
         }
 
-        function readBook(index) {
-            const books = JSON.parse(localStorage.getItem('localBooks'));
-            alert(books[index].content);
-        }
-
-        function deleteBook(index) {
-            const books = JSON.parse(localStorage.getItem('localBooks'));
-            books.splice(index, 1);
-            localStorage.setItem('localBooks', JSON.stringify(books));
+        // Загружаем книги при открытии
+        window.onload = function() {
             loadBooks();
+        };
+        
+        function loadBooks() {
+            try {
+                var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
+                var container = document.getElementById('local-books');
+                container.innerHTML = '';
+                
+                if (books.length === 0) {
+                    container.innerHTML = '<p>У вас пока нет книг, ленивая жопа!</p>';
+                    return;
+                }
+                
+                for (var i = 0; i < books.length; i++) {
+                    var div = document.createElement('div');
+                    div.className = 'book';
+                    div.innerHTML = '<h3>' + books[i].title + '</h3>' +
+                                    '<button onclick="readBook(' + i + ')">Читать</button>' +
+                                    '<button onclick="deleteBook(' + i + ')">Удалить</button>';
+                    container.appendChild(div);
+                }
+            } catch (e) {
+                alert("ОШИБКА ПРИ ЗАГРУЗКЕ КНИГ: " + e.message);
+            }
         }
-
-        // Инициализация
-        window.onload = loadBooks;
+        
+        function readBook(index) {
+            try {
+                var books = JSON.parse(localStorage.getItem('localBooks'));
+                document.getElementById('reader').style.display = 'block';
+                document.getElementById('book-content').textContent = books[index].content;
+            } catch (e) {
+                alert("НЕ УДАЛОСЬ ПРОЧЕСТЬ КНИГУ: " + e.message);
+            }
+        }
+        
+        function deleteBook(index) {
+            try {
+                var books = JSON.parse(localStorage.getItem('localBooks'));
+                books.splice(index, 1);
+                localStorage.setItem('localBooks', JSON.stringify(books));
+                loadBooks();
+            } catch (e) {
+                alert("НЕ УДАЛОСЬ УДАЛИТЬ КНИГУ: " + e.message);
+            }
+        }
     </script>
 </body>
 </html>
