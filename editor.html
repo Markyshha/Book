@@ -40,26 +40,37 @@
     
     <input type="text" id="book-title" placeholder="Название книги">
     <textarea id="book-text" placeholder="Текст книги..."></textarea>
-    <button onclick="saveBook()">Сохранить книгу</button>
+    <button id="save-btn">Сохранить книгу</button>
     
     <script>
-        function saveBook() {
+        // Проверяем, есть ли localStorage вообще, сука
+        if (typeof localStorage === 'undefined') {
+            alert("Твой браузер — говно! localStorage не работает!");
+        }
+
+        // Вешаем обработчик на кнопку (нахуй onclick!)
+        document.getElementById('save-btn').addEventListener('click', function() {
             var title = document.getElementById('book-title').value;
             var text = document.getElementById('book-text').value;
             
-            if(!title || !text) {
-                alert("Заполните все поля!");
+            if (!title || !text) {
+                alert("БЛЯТЬ, ЗАПОЛНИ ПОЛЯ, ДЕБИЛ!");
                 return;
             }
             
-            var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
-            books.push({title: title, content: text});
-            localStorage.setItem('localBooks', JSON.stringify(books));
-            
-            alert("Книга сохранена!");
-            document.getElementById('book-title').value = '';
-            document.getElementById('book-text').value = '';
-        }
+            try {
+                // Достаём книги или создаём пустой массив, если нихуя нет
+                var books = JSON.parse(localStorage.getItem('localBooks') || "[]");
+                books.push({ title: title, content: text });
+                localStorage.setItem('localBooks', JSON.stringify(books));
+                
+                alert("Книга сохранена, епта!");
+                document.getElementById('book-title').value = '';
+                document.getElementById('book-text').value = '';
+            } catch (e) {
+                alert("ОШИБКА, ПИДОР: " + e.message);
+            }
+        });
     </script>
 </body>
 </html>
