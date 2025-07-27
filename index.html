@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Читалка TXT-книг с GitHub</title>
+    <title>📚 Читалка TXT-книг</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
-            padding: 10px;
-            background: #f9f9f9;
+            padding: 20px;
+            background: #f5f5f5;
             color: #333;
         }
         h1 {
@@ -18,45 +18,52 @@
             text-align: center;
         }
         #bookList {
-            margin: 20px 0;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .book-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px;
             background: #0066cc;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.3s;
         }
         .book-btn:hover {
             background: #0055aa;
         }
         #bookContent {
             background: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            white-space: pre-line;
-            line-height: 1.5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            white-space: pre-wrap;
+            line-height: 1.6;
+            min-height: 200px;
         }
         #loading {
             text-align: center;
             color: #666;
             font-style: italic;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>📚 Читалка TXT-книг</h1>
+    <h1>📚 Читалка книг с GitHub</h1>
     
     <div>
         <h3>Доступные книги:</h3>
         <div id="bookList">
-            <!-- Кнопки книг появятся здесь -->
+            <!-- Кнопки книг появятся здесь автоматически -->
         </div>
     </div>
 
@@ -68,7 +75,7 @@
 
     <script>
         // ====== НАСТРОЙКИ ====== //
-        // Замени ссылки на свои .txt-файлы в GitHub
+        // ЗАМЕНИ ЭТИ ССЫЛКИ НА СВОИ!
         const books = [
             { 
                 name: "Пример книги 1", 
@@ -76,7 +83,7 @@
             },
             { 
                 name: "Пример книги 2", 
-                url: "https://raw.githubusercontent.com/ТВОЙ_ЛОГИН/ТВОЙ_РЕПОЗИТОРИЙ/main/books/книга2.txt" 
+                url: "https://raw.githubusercontent.com/ВАШ_ЛОГИН/ВАШ_РЕПОЗИТОРИЙ/main/books/книга2.txt" 
             }
         ];
 
@@ -86,28 +93,46 @@
         const loadingText = document.getElementById("loading");
 
         // Показываем список книг
-        books.forEach(book => {
-            const button = document.createElement("button");
-            button.className = "book-btn";
-            button.textContent = book.name;
-            button.onclick = () => loadBook(book.url);
-            bookList.appendChild(button);
-        });
+        function showBookList() {
+            bookList.innerHTML = '';
+            books.forEach(book => {
+                const button = document.createElement("button");
+                button.className = "book-btn";
+                button.textContent = book.name;
+                button.onclick = () => loadBook(book.url);
+                bookList.appendChild(button);
+            });
+        }
 
-        // Загружаем книгу с GitHub
+        // Загружаем книгу с использованием прокси
         async function loadBook(url) {
             loadingText.textContent = "Загрузка...";
             
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Ошибка загрузки");
+                // Используем прокси для обхода CORS
+                const proxyUrl = "https://api.allorigins.win/raw?url=";
+                const fullUrl = proxyUrl + encodeURIComponent(url);
+                
+                const response = await fetch(fullUrl);
+                if (!response.ok) throw new Error("Сервер вернул ошибку");
                 
                 const text = await response.text();
-                bookContent.innerHTML = `<h3>${url.split('/').pop()}</h3><hr>${text}`;
+                if (!text) throw new Error("Файл пустой");
+                
+                bookContent.innerHTML = `<h3>${url.split('/').pop()}</h3><hr><pre>${text}</pre>`;
             } catch (error) {
-                bookContent.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
+                bookContent.innerHTML = `
+                    <div class="error">
+                        <p>Ошибка при загрузке книги:</p>
+                        <p><strong>${error.message}</strong></p>
+                        <p>Проверьте ссылку: ${url}</p>
+                    </div>
+                `;
             }
         }
+
+        // Запускаем приложение
+        showBookList();
     </script>
 </body>
 </html>
