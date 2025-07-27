@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Книги с GitHub</title>
+    <title>GitHub | Читалка Lumia</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial;
@@ -34,34 +34,10 @@
 <body>
     <button class="back-btn" onclick="window.location.href='index.html'">← На главную</button>
     <h2>Книги с GitHub:</h2>
-    
     <div class="book">
         <h3>Пример книги</h3>
-        <p>https://raw.githubusercontent.com/username/repo/main/books/book1.txt</p>
-        <button onclick="loadBook(this.previousElementSibling.textContent)">Читать</button>
+        <p>Для работы нужен интернет</p>
+        <button disabled>Читать (только онлайн)</button>
     </div>
-    
-    <div id="reader" style="display:none; margin-top:20px; background:white; padding:10px;">
-        <button onclick="document.getElementById('reader').style.display='none'">← Назад</button>
-        <div id="book-content" style="margin-top:10px;"></div>
-    </div>
-    
-    <script>
-        function loadBook(url) {
-            document.getElementById('reader').style.display = 'block';
-            document.getElementById('book-content').textContent = "Загрузка...";
-            
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + url, true);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    document.getElementById('book-content').textContent = xhr.responseText;
-                } else {
-                    document.getElementById('book-content').textContent = "Ошибка загрузки";
-                }
-            };
-            xhr.send();
-        }
-    </script>
 </body>
 </html>
